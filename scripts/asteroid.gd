@@ -25,4 +25,5 @@ func _process(delta):
 		queue_free()
 
 func _on_area_area_entered(area):
+	get_tree().call_group('camera', 'shake', 1)
 	queue_free()

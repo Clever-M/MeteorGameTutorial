@@ -6,9 +6,10 @@ func _ready():
 	pass
 
 func _process(delta):
-	time += delta * 80
-	global_position = Vector2(force,force).rotated(time)
+	if force > 0:
+		time += delta * 80
+		global_position = Vector2(force,force).rotated(time)
+		force = lerp(force, 0, .1)
 
-#	if Input.is_action_just_pressed("ui_cancel"):
-#		force = 1
-	force = lerp(force, 0, .1)
+func shake(f):
+	force = f

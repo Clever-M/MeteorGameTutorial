@@ -97,7 +97,7 @@ script = ExtResource( 7 )
 
 [node name="spawn_timer" type="Timer" parent="scenario/enemies"]
 
-[node name="camera" type="Camera2D" parent="."]
+[node name="camera" type="Camera2D" parent="." groups=["camera"]]
 visible = false
 anchor_mode = 0
 current = true
