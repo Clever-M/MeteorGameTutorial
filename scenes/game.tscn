@@ -1,0 +1,106 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://sprites/ship.png" type="Texture" id=1]
+[ext_resource path="res://sprites/background.png" type="Texture" id=2]
+[ext_resource path="res://scripts/spaceship.gd" type="Script" id=3]
+[ext_resource path="res://scripts/background.gd" type="Script" id=4]
+[ext_resource path="res://scripts/camera.gd" type="Script" id=5]
+[ext_resource path="res://scripts/scenario.gd" type="Script" id=6]
+[ext_resource path="res://scripts/enemies.gd" type="Script" id=7]
+
+[sub_resource type="Shader" id=3]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.4.2.stable's CanvasItemMaterial.
+
+shader_type canvas_item;
+
+uniform float vel = -0.5f;
+uniform float des = 0f;
+uniform float time = 0f;
+void fragment() {
+	COLOR = texture(TEXTURE, UV + (vec2(0, 0.6f) * time * vel) + vec2(des, 0));
+}
+"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+shader_param/vel = -0.5
+shader_param/des = 0.4
+shader_param/time = 0.0
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("ship:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "fogo"
+length = 0.2
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("ship:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 0, 1 ]
+}
+
+[node name="game" type="Node2D"]
+
+[node name="Background" type="Sprite" parent="."]
+material = SubResource( 4 )
+position = Vector2( -2, -2 )
+scale = Vector2( 1.025, 1.01389 )
+texture = ExtResource( 2 )
+centered = false
+script = ExtResource( 4 )
+ship = NodePath("../spaceship")
+
+[node name="spaceship" type="Node2D" parent="."]
+position = Vector2( 80, 266 )
+script = ExtResource( 3 )
+lasers = NodePath("../scenario")
+
+[node name="ship" type="Sprite" parent="spaceship"]
+texture = ExtResource( 1 )
+hframes = 2
+
+[node name="shipAnimation" type="AnimationPlayer" parent="spaceship"]
+autoplay = "fogo"
+playback_speed = 2.0
+anims/RESET = SubResource( 1 )
+anims/fogo = SubResource( 2 )
+
+[node name="blaster" type="Position2D" parent="spaceship"]
+position = Vector2( 0, -35 )
+
+[node name="scenario" type="Node2D" parent="."]
+script = ExtResource( 6 )
+ship = NodePath("../spaceship")
+
+[node name="enemies" type="Node2D" parent="scenario"]
+script = ExtResource( 7 )
+
+[node name="spawn_timer" type="Timer" parent="scenario/enemies"]
+
+[node name="camera" type="Camera2D" parent="."]
+visible = false
+anchor_mode = 0
+current = true
+script = ExtResource( 5 )
+
+[connection signal="timeout" from="scenario/enemies/spawn_timer" to="scenario/enemies" method="_on_spawn_timer_timeout"]
