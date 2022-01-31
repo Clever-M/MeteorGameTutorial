@@ -26,7 +26,7 @@ func _process(delta):
 		dirY += 1
 
 	if Input.is_action_just_pressed("ui_accept"):
-		if(get_tree().get_nodes_in_group('lasers').size() < 3):
+		if(get_tree().get_nodes_in_group('lasers').size() < 7):
 			var laser = PRE_LASER.instance()
 			lasers.add_child(laser)
 			laser.global_position = $blaster.global_position
